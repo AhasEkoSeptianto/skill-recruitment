@@ -1,0 +1,57 @@
+.container {
+	margin: 50px 30%;
+	border: 1px solid #606060;
+	padding: 20px;
+}
+
+/*form*/
+.form_group {
+	display: flex;
+	align-items: center;
+}
+
+.form_group_address {
+	display: block;
+}
+
+.flex {
+	display: flex;
+	align-items: center;
+}
+
+.para {
+	width: 30%;
+}
+
+.input_form {
+	width: 70%;
+	height: 20px;
+}
+
+.input_form_btn {
+	width: 60%;
+	height: 20px;
+	margin: 5px 0px;
+}
+
+.input_add_btn {
+	height: 35px;
+	width: 10%;
+	border: 1px solid #60606060;
+	cursor: pointer;
+}
+
+.submit_button {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 100px;
+}
+
+.submit_button button {
+	border: 1px solid #60606060;
+	padding: 8px;
+	margin-right: 10px;
+	border-radius: 5px;
+}
+
+/*end form*/
