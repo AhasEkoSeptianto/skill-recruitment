@@ -31,10 +31,12 @@ class index extends React.Component {
 	}
 
 	getAllUsers = async () => {
-		Axios.get("http://localhost:8000/users").then(async (res) => {
-			this.setState({ all_users: res.data.all_users });
-			this.setState({ status: "is empty" });
-		});
+		Axios.get("https://api-skill-js.herokuapp.com/users").then(
+			async (res) => {
+				this.setState({ all_users: res.data.all_users });
+				this.setState({ status: "is empty" });
+			}
+		);
 	};
 
 	sortByName = () => {
@@ -72,9 +74,11 @@ class index extends React.Component {
 			this.setState({ search: true });
 			id.innerHTML = "search";
 			search.value = "";
-			Axios.get("http://localhost:8000/users").then(async (res) => {
-				this.setState({ all_users: res.data.all_users });
-			});
+			Axios.get("https://api-skill-js.herokuapp.com/users").then(
+				async (res) => {
+					this.setState({ all_users: res.data.all_users });
+				}
+			);
 		}
 	};
 

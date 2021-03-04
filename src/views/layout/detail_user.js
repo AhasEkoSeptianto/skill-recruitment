@@ -26,16 +26,18 @@ class add_user extends React.Component {
 			id: this.props.location.state.id,
 		};
 
-		axios.post("http://localhost:8000/detail", data).then(async (res) => {
-			this.setState({ id: res.data.result.id });
-			this.setState({ name: res.data.result.nama });
-			this.setState({ email: res.data.result.email });
-			this.setState({ mobile: res.data.result.mobile });
-			this.setState({ birthday: res.data.result.birthday });
-			this.setState({ address: res.data.result.Adress });
-			this.setState({ fetch: false });
-			this.changeBirthday();
-		});
+		axios
+			.post("https://api-skill-js.herokuapp.com/detail", data)
+			.then(async (res) => {
+				this.setState({ id: res.data.result.id });
+				this.setState({ name: res.data.result.nama });
+				this.setState({ email: res.data.result.email });
+				this.setState({ mobile: res.data.result.mobile });
+				this.setState({ birthday: res.data.result.birthday });
+				this.setState({ address: res.data.result.Adress });
+				this.setState({ fetch: false });
+				this.changeBirthday();
+			});
 	}
 
 	changeBirthday = () => {

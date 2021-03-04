@@ -94,9 +94,11 @@ class add_user extends React.Component {
 
 	id_generated = async () => {
 		let data = [];
-		await axios.get("http://localhost:8000/users").then(async (res) => {
-			data.push(res.data.all_users);
-		});
+		await axios
+			.get("https://api-skill-js.herokuapp.com/users")
+			.then(async (res) => {
+				data.push(res.data.all_users);
+			});
 		let id = ("0000" + (data[0].length + 1)).slice(-4);
 		this.setState({ id_generated: id });
 	};
@@ -118,7 +120,7 @@ class add_user extends React.Component {
 		console.log("valid = ", valid);
 		if (valid.err === false) {
 			axios
-				.post("http://localhost:8000/add", valid.data)
+				.post("https://api-skill-js.herokuapp.com/add", valid.data)
 				.then(async (res) => {
 					console.log("succes");
 					this.setState({ redirect: true });
