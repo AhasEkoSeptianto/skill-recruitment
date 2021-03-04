@@ -18,6 +18,7 @@ class add_user extends React.Component {
 			fetch: true,
 			redirect: false,
 			id: "",
+			id_user: 0,
 		};
 	}
 
@@ -49,6 +50,7 @@ class add_user extends React.Component {
 		axios
 			.post("https://api-skill-js.herokuapp.com/detail", data)
 			.then(async (res) => {
+				this.setState({ id_user: res.data.result.id });
 				this.setState({ id: res.data.result._id });
 				this.setState({ name: res.data.result.nama });
 				this.setState({ email: res.data.result.email });
@@ -60,22 +62,80 @@ class add_user extends React.Component {
 			});
 	}
 
+	validate = (data) => {
+		let lenght_birthday = data.birthday;
+		var result = {
+			data: data,
+			err: false,
+		};
+
+		if (data.email.includes("@") && data.email.includes(".com")) {
+			document
+				.getElementById("email")
+				.setAttribute("style", "border:1px solid gray;padding:5px;");
+		} else {
+			result.err = true;
+			document
+				.getElementById("email")
+				.setAttribute("style", "border:1px solid red;padding:5px;");
+		}
+
+		if (data.nama !== "") {
+			document
+				.getElementById("nama")
+				.setAttribute("style", "border:1px solid gray;padding:5px;");
+		} else {
+			result.err = true;
+			document
+				.getElementById("nama")
+				.setAttribute("style", "border:1px solid red;padding:5px;");
+		}
+
+		if (data.mobile.match(/^-?\d+$/)) {
+			document
+				.getElementById("number")
+				.setAttribute("style", "border:1px solid gray;padding:5px;");
+		} else {
+			result.err = true;
+			document
+				.getElementById("number")
+				.setAttribute("style", "border:1px solid red;padding:5px;");
+		}
+		if (lenght_birthday.length === 10) {
+			document
+				.getElementById("birthday")
+				.setAttribute("style", "border:1px solid gray;padding:5px;");
+		} else {
+			result.err = true;
+			document
+				.getElementById("birthday")
+				.setAttribute("style", "border:1px solid red;padding:5px;");
+		}
+		return result;
+	};
+
 	submit = () => {
-		console.log(document.getElementById("name").value);
 		let data = {
 			id: this.state.id,
-			nama: document.getElementById("name").value,
+			nama: document.getElementById("nama").value,
 			email: document.getElementById("email").value,
-			mobile: document.getElementById("mobile").value,
-			birthday: document.getElementById("birthdate").value,
+			mobile: document.getElementById("number").value,
+			birthday: document.getElementById("birthday").value,
 			Adress: document.getElementById("address_form").value,
 		};
-		axios
-			.post("https://api-skill-js.herokuapp.com/edit", data)
-			.then(async (res) => {
-				console.log("succes");
-				this.setState({ redirect: true });
-			});
+		console.log(data);
+
+		let valid = this.validate(data);
+		if (valid.err === false) {
+			axios
+				.post("https://api-skill-js.herokuapp.com/edit", data)
+				.then(async (res) => {
+					console.log("succes");
+					this.setState({ redirect: true });
+				});
+		} else {
+			console.log("err");
+		}
 	};
 
 	render() {
@@ -91,10 +151,19 @@ class add_user extends React.Component {
 					) : (
 						<Fragment>
 							<div className={styles.form_group}>
+								<p className={styles.para}>ID</p>
+								<input
+									type="text"
+									className={styles.input_form}
+									value={this.state.id_user}
+									disabled
+								/>
+							</div>
+							<div className={styles.form_group}>
 								<p className={styles.para}>Name</p>
 								<input
 									type="text"
-									id="name"
+									id="nama"
 									className={styles.input_form}
 									value={this.state.name}
 									onChange={(e) =>
@@ -118,7 +187,7 @@ class add_user extends React.Component {
 								<p className={styles.para}>mobile</p>
 								<input
 									type="text"
-									id="mobile"
+									id="number"
 									className={styles.input_form}
 									value={this.state.mobile}
 									onChange={(e) =>
@@ -132,7 +201,7 @@ class add_user extends React.Component {
 								<p className={styles.para}>Birthdate</p>
 								<input
 									type="text"
-									id="birthdate"
+									id="birthday"
 									placeholder="YYYY-MM-DD"
 									className={styles.input_form}
 									value={this.state.birthdate}

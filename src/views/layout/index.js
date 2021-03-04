@@ -20,24 +20,92 @@ class index extends React.Component {
 		this.state = {
 			all_users: [],
 			fetch: true,
-			status: "",
+			status: "loading..",
+			search: true,
+			perpage: 5,
 		};
 	}
 
-	async componentDidMount() {
-		Axios.get("https://api-skill-js.herokuapp.com/users").then(
-			async (res) => {
-				this.setState({ all_users: res.data.all_users });
-				this.setState({ status: "is empty" });
-			}
-		);
+	componentDidMount() {
+		this.getAllUsers();
 	}
 
+	getAllUsers = async () => {
+		Axios.get("http://localhost:8000/users").then(async (res) => {
+			this.setState({ all_users: res.data.all_users });
+			this.setState({ status: "is empty" });
+		});
+	};
+
 	sortByName = () => {
-		console.log(this.state.all_users);
-		this.state.all_users.sort(function (a, b) {
+		let newall_user = [...this.state.all_users];
+		newall_user.sort(function (a, b) {
 			return a.nama.localeCompare(b.nama);
 		});
+		this.setState({ all_users: newall_user });
+		console.log(this.state.perpage);
+	};
+
+	sortByEmail = () => {
+		let newall_user = [...this.state.all_users];
+		newall_user.sort(function (a, b) {
+			return a.email.localeCompare(b.email);
+		});
+		this.setState({ all_users: newall_user });
+	};
+
+	sortByMobile = () => {
+		let newall_user = [...this.state.all_users];
+		newall_user.sort(function (a, b) {
+			return a.mobile.localeCompare(b.mobile);
+		});
+		this.setState({ all_users: newall_user });
+	};
+
+	handleSearch = () => {
+		let id = document.getElementById("btn_search");
+		let search = document.getElementById("search");
+		if (this.state.search === true) {
+			this.setState({ search: false });
+			id.innerHTML = "clear";
+		} else {
+			this.setState({ search: true });
+			id.innerHTML = "search";
+			search.value = "";
+			Axios.get("http://localhost:8000/users").then(async (res) => {
+				this.setState({ all_users: res.data.all_users });
+			});
+		}
+	};
+
+	search = () => {
+		let form_input = document.getElementById("search").value;
+		var result = [];
+		this.state.all_users.map((value, index) => {
+			if (value.nama === form_input) {
+				result.push(value);
+			}
+			if (value.email === form_input) {
+				result.push(value);
+			}
+			if (value.mobile === form_input) {
+				result.push(value);
+			}
+		});
+		this.setState({ all_users: result });
+		this.handleSearch();
+	};
+
+	handleperpage = async (e) => {
+		let limit_page_max = e.value;
+		// var result = [];
+		// await this.getAllUsers();
+		// this.state.all_users.forEach((value, index) => {
+		// 	if (index < limit_page_max) {
+		// 		result.push(value);
+		// 	}
+		// });
+		// this.setState({ all_users: result });
 	};
 
 	render() {
@@ -54,8 +122,13 @@ class index extends React.Component {
 							<input
 								type="text"
 								placeholder="Search by ID, name, or email"
+								id="search"
 							/>
-							<button className={styles.seacrh_button}>
+							<button
+								className={styles.seacrh_button}
+								onClick={this.search}
+								id="btn_search"
+							>
 								search
 							</button>
 							<Link to="/add-user">
@@ -85,11 +158,19 @@ class index extends React.Component {
 						</th>
 						<th>
 							<span>Email</span>
-							<img src={Sort} alt="none" />
+							<img
+								src={Sort}
+								alt="none"
+								onClick={this.sortByEmail}
+							/>
 						</th>
 						<th>
 							<span>Mobile</span>
-							<img src={Sort} alt="none" />
+							<img
+								src={Sort}
+								alt="none"
+								onClick={this.sortByMobile}
+							/>
 						</th>
 						<th className={styles.optionActionDisplay}>Action</th>
 					</tr>
@@ -166,7 +247,12 @@ class index extends React.Component {
 						className={styles.perpages}
 					>
 						{perpages.map((value) => (
-							<option value="">{value}</option>
+							<option
+								value="value"
+								onClick={(e) => this.handleperpage({ value })}
+							>
+								{value}
+							</option>
 						))}
 					</select>
 					<p>per pages</p>

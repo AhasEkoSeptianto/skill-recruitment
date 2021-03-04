@@ -10,10 +10,11 @@ class add_user extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			id_generated: 0,
 			name: "",
 			email: "",
 			mobile: "",
-			birthdate: "",
+			birthday: "",
 			address: "",
 			redirect: false,
 		};
@@ -40,33 +41,90 @@ class add_user extends React.Component {
 	};
 
 	validate = (data) => {
-		if (data.includes("@") && data.includes(".com")) {
-			return true;
+		let lenght_birthday = data.birthday;
+		var result = {
+			data: data,
+			err: false,
+		};
+
+		if (data.email.includes("@") && data.email.includes(".com")) {
+			document
+				.getElementById("email")
+				.setAttribute("style", "border:1px solid gray;padding:5px;");
 		} else {
-			return false;
+			result.err = true;
+			document
+				.getElementById("email")
+				.setAttribute("style", "border:1px solid red;padding:5px;");
 		}
+
+		if (data.nama !== undefined) {
+			document
+				.getElementById("nama")
+				.setAttribute("style", "border:1px solid gray;padding:5px;");
+		} else {
+			result.err = true;
+			document
+				.getElementById("nama")
+				.setAttribute("style", "border:1px solid red;padding:5px;");
+		}
+
+		if (data.mobile.match(/^-?\d+$/)) {
+			document
+				.getElementById("number")
+				.setAttribute("style", "border:1px solid gray;padding:5px;");
+		} else {
+			result.err = true;
+			document
+				.getElementById("number")
+				.setAttribute("style", "border:1px solid red;padding:5px;");
+		}
+		if (lenght_birthday.length === 10) {
+			document
+				.getElementById("birthday")
+				.setAttribute("style", "border:1px solid gray;padding:5px;");
+		} else {
+			result.err = true;
+			document
+				.getElementById("birthday")
+				.setAttribute("style", "border:1px solid red;padding:5px;");
+		}
+		return result;
 	};
 
-	submit = () => {
+	id_generated = async () => {
+		let data = [];
+		await axios.get("http://localhost:8000/users").then(async (res) => {
+			data.push(res.data.all_users);
+		});
+		let id = ("0000" + (data[0].length + 1)).slice(-4);
+		this.setState({ id_generated: id });
+	};
+
+	submit = async () => {
+		await this.id_generated();
+
 		let data = {
+			id: this.state.id_generated,
 			nama: this.state.nama,
 			email: this.state.email,
 			mobile: this.state.mobile,
-			birthday: this.state.birthdate,
+			birthday: this.state.birthday,
 			Adress: this.state.address,
+			id: this.state.id_generated,
 		};
-		let valid = this.validate(data.email);
-		if (valid === true) {
+		console.log("data = ", data);
+		let valid = this.validate(data);
+		console.log("valid = ", valid);
+		if (valid.err === false) {
 			axios
-				.post("https://api-skill-js.herokuapp.com/add", data)
+				.post("http://localhost:8000/add", valid.data)
 				.then(async (res) => {
 					console.log("succes");
 					this.setState({ redirect: true });
 				});
 		} else {
-			document
-				.getElementById("email")
-				.setAttribute("styles", "border:1px solid red;");
+			console.log("erroe");
 		}
 	};
 
@@ -82,6 +140,7 @@ class add_user extends React.Component {
 						<p className={styles.para}>Name</p>
 						<input
 							type="text"
+							id="nama"
 							className={styles.input_form}
 							onChange={(e) =>
 								this.setState({
@@ -106,7 +165,8 @@ class add_user extends React.Component {
 					<div className={styles.form_group}>
 						<p className={styles.para}>mobile</p>
 						<input
-							type="text"
+							type="number"
+							id="number"
 							className={styles.input_form}
 							onChange={(e) =>
 								this.setState({
@@ -116,14 +176,15 @@ class add_user extends React.Component {
 						/>
 					</div>
 					<div className={styles.form_group}>
-						<p className={styles.para}>Birthdate</p>
+						<p className={styles.para}>birthday</p>
 						<input
 							type="text"
+							id="birthday"
 							placeholder="YYYY-MM-DD"
 							className={styles.input_form}
 							onChange={(e) =>
 								this.setState({
-									birthdate: e.target.value,
+									birthday: e.target.value,
 								})
 							}
 						/>

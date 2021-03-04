@@ -10,6 +10,7 @@ class add_user extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			id_user: 0,
 			name: "",
 			email: "",
 			mobile: "",
@@ -49,7 +50,7 @@ class add_user extends React.Component {
 		axios
 			.post("https://api-skill-js.herokuapp.com/detail", data)
 			.then(async (res) => {
-				console.log(res.data.result);
+				this.setState({ id_user: res.data.result.id });
 				this.setState({ id: res.data.result._id });
 				this.setState({ name: res.data.result.nama });
 				this.setState({ email: res.data.result.email });
@@ -84,6 +85,12 @@ class add_user extends React.Component {
 						<p>wait..</p>
 					) : (
 						<Fragment>
+							<div className={styles.form_group}>
+								<p className={styles.para}>ID</p>
+								<p className={styles.input_form}>
+									{this.state.id_user}
+								</p>
+							</div>
 							<div className={styles.form_group}>
 								<p className={styles.para}>Name</p>
 								<p className={styles.input_form}>

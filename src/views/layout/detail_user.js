@@ -10,10 +10,11 @@ class add_user extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			id: 0,
 			name: "",
 			email: "",
 			mobile: "",
-			birthdate: "",
+			birthday: "",
 			address: "",
 			fetch: true,
 		};
@@ -25,18 +26,79 @@ class add_user extends React.Component {
 			id: this.props.location.state.id,
 		};
 
-		axios
-			.post("https://api-skill-js.herokuapp.com/detail", data)
-			.then(async (res) => {
-				this.setState({ name: res.data.result.nama });
-				this.setState({ email: res.data.result.email });
-				this.setState({ mobile: res.data.result.mobile });
-				this.setState({ birthdate: res.data.result.birthday });
-				this.setState({ address: res.data.result.Adress });
-				this.setState({ fetch: false });
-				console.log(this.state.user);
-			});
+		axios.post("http://localhost:8000/detail", data).then(async (res) => {
+			this.setState({ id: res.data.result.id });
+			this.setState({ name: res.data.result.nama });
+			this.setState({ email: res.data.result.email });
+			this.setState({ mobile: res.data.result.mobile });
+			this.setState({ birthday: res.data.result.birthday });
+			this.setState({ address: res.data.result.Adress });
+			this.setState({ fetch: false });
+			this.changeBirthday();
+		});
 	}
+
+	changeBirthday = () => {
+		let doc = this.state.birthday;
+		let tanggal = doc.split("-")[2];
+		let bulan = doc.split("-")[1];
+		let tahun = doc.split("-")[0];
+		console.log("tgl = ", tanggal);
+		console.log("bln = ", bulan);
+		console.log("tahun = ", tahun);
+		switch (bulan) {
+			case "01": {
+				bulan = "January";
+				break;
+			}
+			case "02": {
+				bulan = "February";
+				break;
+			}
+			case "03": {
+				bulan = "Maret";
+				break;
+			}
+			case "04": {
+				bulan = "April";
+				break;
+			}
+			case "05": {
+				bulan = "Mei";
+				break;
+			}
+			case "06": {
+				bulan = "Juni";
+				break;
+			}
+			case "07": {
+				bulan = "Juli";
+				break;
+			}
+			case "08": {
+				bulan = "Agustus";
+				break;
+			}
+			case "09": {
+				bulan = "September";
+				break;
+			}
+			case "10": {
+				bulan = "Oktober";
+				break;
+			}
+			case "11": {
+				bulan = "November";
+				break;
+			}
+			case "12": {
+				bulan = "Desember";
+				break;
+			}
+		}
+		let result = tanggal + " " + bulan + " " + tahun;
+		this.setState({ birthday: result });
+	};
 
 	render() {
 		return (
@@ -47,6 +109,12 @@ class add_user extends React.Component {
 						<p>wait..</p>
 					) : (
 						<Fragment>
+							<div className={styles.form_group}>
+								<p className={styles.para}>ID</p>
+								<p className={styles.input_form}>
+									{this.state.id}
+								</p>
+							</div>
 							<div className={styles.form_group}>
 								<p className={styles.para}>Name</p>
 								<p className={styles.input_form}>
@@ -66,9 +134,9 @@ class add_user extends React.Component {
 								</p>
 							</div>
 							<div className={styles.form_group}>
-								<p className={styles.para}>Birthdate</p>
+								<p className={styles.para}>birthday</p>
 								<p className={styles.input_form}>
-									{this.state.birthdate}
+									{this.state.birthday}
 								</p>
 							</div>
 							<div
